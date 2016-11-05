@@ -4,7 +4,7 @@ from django.core.mail import send_mail
 from django.conf import settings
 
 from .models import Post
-from .forms import EmailPostForm
+from .forms import EmailPostForm, CommentForm
 
 
 class PostListView(ListView):
@@ -23,7 +23,22 @@ def post_detail(request, year, month, day, post):
         publish__month=month,
         publish__day=day
     )
-    return render(request, 'blog/post/detail.html', {'post': post})
+    comments = post.comments.filter(active=True)
+    context = {
+        'post': post,
+        'comments': comments
+    }
+    if request.method == 'POST':
+        comment_form = CommentForm(data=request.POST)
+        if comment_form.is_valid():
+            new_comment = comment_form.save(commit=False)
+            new_comment.post = post
+            new_comment.save()
+            context['new_comment'] = new_comment
+    else:
+        comment_form = CommentForm()
+    context['comment_form'] = comment_form
+    return render(request, 'blog/post/detail.html', context)
 
 
 def post_share(request, post_id):
