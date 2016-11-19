@@ -33,4 +33,7 @@ urlpatterns = [
         auth_views.password_reset_complete,
         name='password_reset_complete'
     ),
+
+    # registration urls
+    url(r'^register/$', views.register, name='register'),
 ]
