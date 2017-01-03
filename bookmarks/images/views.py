@@ -10,7 +10,6 @@ def image_create(request):
     if request.method == 'POST':
         form = ImageCreateForm(data=request.POST)
         if form.is_valid():
-            cd = form.cleaned_data
             new_image = form.save(commit=False)
 
             new_image.user = request.user
