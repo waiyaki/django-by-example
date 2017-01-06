@@ -10,9 +10,11 @@
       {% endthumbnail %}
     </a>
     <div class="info">
-      <a href="{{ iamge.get_absolute_url }}" class="title">
+      <a href="{{ image.get_absolute_url }}" class="title">
         {{ image.title }}
       </a>
     </div>
   </div>
+{% empty %}
+  No images found.
 {% endfor %}
