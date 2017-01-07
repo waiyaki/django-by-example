@@ -16,15 +16,40 @@
     <span class="count">
       <span class="total">{{ total_followers }} </span> follower{{ total_followers|pluralize }}
     </span>
-    <a href="#" data-id="{{ user.id }}" data-action="{% if request.user in users.followers.all %}un{% endif %}follow" class="follow button">
-      {% if request.user not in user.followers.all %}
-        Follow
-      {% else %}
-        Unfollow
-      {% endif %}
-    </a>
+    {% if request.user.id != user.id %}
+      <a href="#" data-id="{{ user.id }}" data-action="{% if request.user in user.followers.all %}un{% endif %}follow" class="follow button">
+        {% if request.user not in user.followers.all %}
+          Follow
+        {% else %}
+          Unfollow
+        {% endif %}
+      </a>
+    {% endif %}
+
     <div class="image-container" id="image-list">
       {% include "images/image/list_ajax.html" with images=user.images_created.all %}
     </div>
   {% endwith %}
+{% endblock %}
+
+{% block domready %}
+  $('a.follow').click(function(e) {
+    e.preventDefault();
+    $.post('{% url "user_follow" %}', {
+      id: $(this).data('id'),
+      action: $(this).data('action')
+    }, function(data) {
+      if (data.status == 'ok') {
+        var previous_action = $('a.follow').data('action');
+        // toggle data-action
+        $('a.follow').data('action', previous_action === 'follow' ? 'unfollow' : 'follow');
+        // Toggle link text
+        $('a.follow').text(previous_action === 'follow' ? 'Unfollow' : 'Follow');
+
+        // Update total likes
+        var previous_followers =parseInt($('span.count .total').text(), 10);
+        $('span.count .total').text(previous_action === 'follow' ? ++previous_followers : --previous_followers);
+      }
+    });
+  });
 {% endblock %}
