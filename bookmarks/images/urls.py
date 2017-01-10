@@ -11,4 +11,5 @@ urlpatterns = [
         name='detail'
     ),
     url(r'^like/$', views.image_like, name='like'),
+    url(r'^ranking/$', views.image_ranking, name='ranking'),
 ]
