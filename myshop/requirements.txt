@@ -1,2 +1,4 @@
 Django==1.10.5
 Pillow==4.0.0
+celery==4.0.2
+flower==0.9.1
